@@ -1,0 +1,443 @@
+{
+	"info": {
+		"_postman_id": "e820db11-5068-4daf-8362-7fce1595e557",
+		"name": "My-Talentek",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "{{BaseUrl}}/signup",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							" let fn=pm.variables.replaceIn(\"{{$randomFirstName}}\");",
+							"pm.environment.set('FirstName', fn);",
+							" let ln=pm.variables.replaceIn(\"{{$randomLastName}}\");",
+							" pm.environment.set('a', ln);",
+							" let em=pm.variables.replaceIn(\"{{$randomEmail}}\");",
+							"pm.environment.set('email', em);",
+							"",
+							" let pass=",
+							"Math.random().toString(36).substring(2,9)+ Math.random().toString(5).substring(2,5);",
+							"pm.environment.set(\"password\",pass);",
+							"pm.environment.set('year',_.random(1935,2013));",
+							"pm.environment.set('day',_.random(10,28));",
+							"pm.environment.set('month',_.random (10,12));",
+							"console.log(pass);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();",
+							"console.log(res.id);",
+							"let stu_id=pm.variables.replaceIn(res.id);",
+							"pm.environment.set('studentid', stu_id);",
+							"pm.test('verifying student information', function(){",
+							"pm.expect(res.message).to.eql(\"Registration Success\");",
+							"})",
+							"pm.test('verifying success',function(){",
+							"pm.expect(res.success).to.eql(true);",
+							"})",
+							"pm.test('verifying student id',function(){",
+							"pm.expect(res.studentId).to.eql(environment.stu_id);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\" : \"{{FirstName}}\",\n    \"lastName\" : \"{{a}}\",\n    \"email\"     : \"{{email}}\",\n    \"password\"  : \"{{password}}\",\n    \"confirmPassword\"  : \"{{password}}\",\n    \"dob\"       : {\n        \"year\"      : {{year}},\n        \"month\"     : \n        {{month}},\n        \"day\"       : {{day}}\n    },\n    \"gender\"    : \"female\",\n    \"agree\"     : true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/signup",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();",
+							"console.log(res.id);",
+							"let stu_id=pm.variables.replaceIn(res.id);",
+							"pm.environment.set('studentid', stu_id);",
+							"pm.test('verifying student information', function(){",
+							"pm.response.to.have.status(200);",
+							"pm.expect(res.message).to.eql(\"Student Found\");",
+							"pm.expect(res.data.firstName).to.eql(environment.FirstName);",
+							"})",
+							"pm.test('verifying student lastName', function(){",
+							"pm.expect(res.data.lastName).to.eql(environment.a);",
+							"})",
+							"pm.test('verifying studentid', function(){",
+							" pm.expect(res.data.studentId).to.eql(environment.studentid);",
+							"",
+							" })",
+							" pm.test('verifying studentemail',function(){",
+							"pm.expect(res.data.email).to.eql(environment.email);",
+							"",
+							" })",
+							" pm.test('verifying student gender',function(){",
+							"     pm.expect(res.data.gen).to.eql(environment.female);",
+							" })",
+							" pm.test('verifying student dob',function(){",
+							"     var x = environment.year;",
+							"        var y = environment.month;",
+							"        var n = environment.day;",
+							"        var expDOB = x+\"-\"+y+\"-\"+n;",
+							"        pm.expect(res.data.dob).to.eql(expDOB);",
+							" })",
+							" pm.test('verifying student checkbox',function(){",
+							"     pm.expect(res.data.agree).to.eql(environment.true);",
+							" })",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/student/{{studentid}}",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"student",
+						"{{studentid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();\r",
+							"console.log(res.id);\r",
+							"let stu_id=pm.variables.replaceIn(res.id);\r",
+							"let token=pm.variables.replaceIn(res.token);\r",
+							"pm.environment.set('tk',token);\r",
+							"pm.test('verifying student login',function(){\r",
+							"    pm.expect(res.success).to.eql(true);\r",
+							"})\r",
+							"pm.test('verifying student status',function(){\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"pm.test('verifying student message',function(){\r",
+							"    pm.expect(res.message).to.eql(\"Login Success\");\r",
+							"})\r",
+							"// pm.test('verifying token',function(){\r",
+							"// pm.expect(res.token).to.eql(environment.tk)\r",
+							"// })"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9xYS50YWx0ZWt0Yy5jb20iLCJhdWQiOiJUSEVfQVVESUVOQ0UiLCJpYXQiOjE2MTkyNzk2MzMsIm5iZiI6MTYxOTI3OTY0MywiZXhwIjoxNjE5MzY2MDMzLCJpc19hZG1pbiI6ZmFsc2UsImRhdGEiOnsiaWQiOiIxNjgiLCJmaXJzdF9uYW1lIjoiSWtlIiwibGFzdF9uYW1lIjoiV2Fsc2giLCJlbWFpbCI6IlJvZDQwQGhvdG1haWwuY29tIiwic3R1ZGVudElkIjoiVFRDcmJQd1oifX0.3GZ8iCDiBR7VcIzUClBUunOzp48dQqH1_pI_d6oE_rk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\" : \"{{email}}\",\n    \"password\" : \"{{password}}\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://qa.taltektc.com/api/login",
+					"protocol": "http",
+					"host": [
+						"qa",
+						"taltektc",
+						"com"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();\r",
+							"console.log(res.id);\r",
+							"pm.test('verifying profile update',function(){\r",
+							"    pm.expect(res.success).to.eql(true);\r",
+							"})\r",
+							"pm.test('verifying student update',function(){\r",
+							"    pm.expect(res.message).to.eql(\"Update success\");\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9xYS50YWx0ZWt0Yy5jb20iLCJhdWQiOiJUSEVfQVVESUVOQ0UiLCJpYXQiOjE2MTkyNzk2MzMsIm5iZiI6MTYxOTI3OTY0MywiZXhwIjoxNjE5MzY2MDMzLCJpc19hZG1pbiI6ZmFsc2UsImRhdGEiOnsiaWQiOiIxNjgiLCJmaXJzdF9uYW1lIjoiSWtlIiwibGFzdF9uYW1lIjoiV2Fsc2giLCJlbWFpbCI6IlJvZDQwQGhvdG1haWwuY29tIiwic3R1ZGVudElkIjoiVFRDcmJQd1oifX0.3GZ8iCDiBR7VcIzUClBUunOzp48dQqH1_pI_d6oE_rk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\" : \"Eden\",\n    \"lastName\" : \"updated\",\n    \"email\"     : \"Adriel_Kassulke@yahoo.com\",\n    \n    \"dob\"       : {\n        \"year\"      : 2002,\n        \"month\"     : 10,\n        \n        \"day\"       : 21\n    },\n    \"gender\"    : \"male\",\n    \"agree\"     : true\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/student/TTCemRSz",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"student",
+						"TTCemRSz"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "verify after update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();\r",
+							"console.log(res.id);\r",
+							"let stu_id=pm.variables.replaceIn(res.id);\r",
+							"pm.environment.set('studentId',stu_id);\r",
+							"pm.test('verifying profile update',function(){\r",
+							"pm.test(res.message).to.have(\"Student Found\");\r",
+							"})\r",
+							"pm.test('verifying student firstName',function(){\r",
+							"    pm.expect(res.data.FirstName).to.eql(environment.firstName);\r",
+							"    pm.expect(res.data.agree).to.eql(true);\r",
+							"})\r",
+							"pm.test('verifying student lastName',function(){ \r",
+							"pm.expect(res.data.LastName).to.eql(environment.lastName);\r",
+							"})\r",
+							"pm.test('verifying studentId',function(){\r",
+							"    pm.expect(res.data.stu_id).to.eql(environment.stu_id);\r",
+							"})\r",
+							"pm.test('verifying student email',function(){\r",
+							"    pm.expect(res.data.email).to.eql(environment.email);\r",
+							"})\r",
+							"pm.test('verifying student gender',function(){\r",
+							"    pm.expect(res.data.gen).to.eql(environment.gender);\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9xYS50YWx0ZWt0Yy5jb20iLCJhdWQiOiJUSEVfQVVESUVOQ0UiLCJpYXQiOjE2MTcwNjc5MzUsIm5iZiI6MTYxNzA2Nzk0NSwiZXhwIjoxNjE3MTU0MzM1LCJpc19hZG1pbiI6ZmFsc2UsImRhdGEiOnsiaWQiOiIyNzUiLCJmaXJzdF9uYW1lIjoic2FoYXIiLCJsYXN0X25hbWUiOiJraGFuIiwiZW1haWwiOiJyZXN0YXBpMkBnbWFpbC5jb20iLCJzdHVkZW50SWQiOiJUVENucWJETSJ9fQ.KtvUnCgx7TZwgd5CG1tUtXhtZ4nXekoIA5yNmKUNWRA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/student/{{studentid}}",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"student",
+						"{{studentid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();\r",
+							"console.log(res.id);\r",
+							"let stu_id=pm.variables.replaceIn(res.id);\r",
+							"pm.environment.set('studentId',stu_id);\r",
+							"pm.test('verifying profile update',function(){\r",
+							"pm.test(res.message).to.have(\"Student Found\");\r",
+							"})\r",
+							"pm.test('verifying student firstName',function(){\r",
+							"    pm.expect(res.data.FirstName).to.eql(environment.firstName);\r",
+							"    pm.expect(res.data.agree).to.eql(true);\r",
+							"})\r",
+							"pm.test('verifying student lastName',function(){ \r",
+							"pm.expect(res.data.LastName).to.eql(environment.lastName);\r",
+							"})\r",
+							"pm.test('verifying studentId',function(){\r",
+							"    pm.expect(res.data.stu_id).to.eql(environment.stu_id);\r",
+							"})\r",
+							"pm.test('verifying student email',function(){\r",
+							"    pm.expect(res.data.email).to.eql(environment.email);\r",
+							"})\r",
+							"pm.test('verifying student gender',function(){\r",
+							"    pm.expect(res.data.gen).to.eql(environment.gender);\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9xYS50YWx0ZWt0Yy5jb20iLCJhdWQiOiJUSEVfQVVESUVOQ0UiLCJpYXQiOjE2MTcwNjc5MzUsIm5iZiI6MTYxNzA2Nzk0NSwiZXhwIjoxNjE3MTU0MzM1LCJpc19hZG1pbiI6ZmFsc2UsImRhdGEiOnsiaWQiOiIyNzUiLCJmaXJzdF9uYW1lIjoic2FoYXIiLCJsYXN0X25hbWUiOiJraGFuIiwiZW1haWwiOiJyZXN0YXBpMkBnbWFpbC5jb20iLCJzdHVkZW50SWQiOiJUVENucWJETSJ9fQ.KtvUnCgx7TZwgd5CG1tUtXhtZ4nXekoIA5yNmKUNWRA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/student/{{studentid}}",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"student",
+						"{{studentid}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
